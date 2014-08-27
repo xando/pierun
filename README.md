@@ -1,13 +1,13 @@
-# Chell
+# Thor
 
-Virtualenv like docker wrapper
+Inspired by both Python's virtualenv and Vagrant tools. 
 
 
 ## INSTALL
 
-Install **chell**
+Install **thor**
 
-	$ pip install chell
+	$ pip install thor
 
 You will need **docker** as well
 
@@ -24,19 +24,19 @@ You will need **docker** as well
 
 Create environment
 
-	$ chell create {name}
+	$ thor create {name}
 
 
 Activate environment
 
-	$ chell activate {name}
+	$ thor activate {name}
 
 
 List all available environments 
 
-	$ chell list 
+	$ thor list 
 
 
 Destroy environment
 
-	$ chell destroy {name}
+	$ thor destroy {name}
