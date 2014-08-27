@@ -11,6 +11,7 @@ stdout, _ = subprocess.Popen(
     "docker version", shell=True, stdout=subprocess.PIPE
 ).communicate()
 
+
 if stdout.split()[4] == "API":
     version = stdout.split()[6]
 else:
@@ -28,14 +29,10 @@ DOCKER = docker.Client(
 )
 DOCKER_VAR = "/var/lib/docker/aufs/mnt/"
 
-ROOT = os.path.expanduser("~/.v-thing")
-if not os.path.exists(ROOT):
-    os.mkdir(ROOT)
 
 SSH_KEY = os.path.expanduser("~/.ssh/id_rsa.pub")
 if not os.path.exists(SSH_KEY):
     print("You have to setup ssh keys")
-
 
 def _name(name):
     return "%s-%s" % (PREFIX, name)
@@ -150,7 +147,7 @@ def THOR_list(args):
             print name
 
 
-def destroy_envirotments(args):
+def THOR_destroy(args):
     name = _name(args.name)
 
     for c in DOCKER.containers(all=True):
@@ -160,11 +157,6 @@ def destroy_envirotments(args):
             DOCKER.remove_container(c['Id'])
             DOCKER.remove_image(name)
 
-
-def pwd(args):
-    name = args.name
-    _, name = open(os.path.join(ROOT, name)).read().split(':')
-    print(os.path.join(DOCKER_VAR, name))
 
 
 def main():
@@ -180,15 +172,11 @@ def main():
 
     destroy_command = subparsers.add_parser('destroy', help='destroy')
     destroy_command.add_argument('name', type=str, help='name')
-    destroy_command.set_defaults(func=destroy_envirotments)
+    destroy_command.set_defaults(func=THOR_destroy)
 
     activate_command = subparsers.add_parser('activate', help='activate')
     activate_command.add_argument('name', type=str, help='name')
     activate_command.set_defaults(func=THOR_activate)
-
-    pwd_command = subparsers.add_parser('pwd', help='activate envirotment')
-    pwd_command.add_argument('name', type=str, help='name')
-    pwd_command.set_defaults(func=pwd)
 
     args = parser.parse_args()
     args.func(args)
