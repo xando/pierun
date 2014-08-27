@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
-    name='chell',
+    name='thor',
     author='Sebastian Pawluś',
     author_email='sebastian.pawlus@gmail.com',
     version="0.1.4",
-    packages=['chell'],
+    packages=['thor'],
     description='A simple wrapper around docker',
     install_requires=["docker-py"],
-    package_data={'chell': ['Dockerfile']},
+    package_data={'thor': ['Dockerfile']},
     entry_points={
         'console_scripts': [
-            'chell=chell.bin:main',
+            'thor=thor.bin:main',
         ],
     },
     classifiers=[
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
     ],
     zip_safe=False
 )
