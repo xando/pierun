@@ -10,6 +10,9 @@ before_install:
   - sudo pip install -r requirements.txt
   - sudo pip install -e .
   - sudo service docker start
+  - sudo mkdir -p /var/lib/docker
+  - echo exit 101 | sudo tee /usr/sbin/policy-rc.d
+  - sudo chmod +x /usr/sbin/policy-rc.d
 
 script: sudo py.test tests.py -v
 
