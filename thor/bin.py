@@ -19,21 +19,19 @@ else:
     version = '0.9.1'
 
 
-PREFIX= "THOR"
+PREFIX = "THOR"
 BASE_IMAGE = "%s-BASE" % PREFIX
-
 
 DOCKER = docker.Client(
     base_url='unix://var/run/docker.sock',
     version=version,
     timeout=10
 )
-DOCKER_VAR = "/var/lib/docker/aufs/mnt/"
-
 
 SSH_KEY = os.path.expanduser("~/.ssh/id_rsa.pub")
 if not os.path.exists(SSH_KEY):
     print("You have to setup ssh keys")
+
 
 def _name(name):
     return "%s-%s" % (PREFIX, name)
@@ -44,16 +42,6 @@ def is_running(name):
     if name in names:
         return True
     return False
-
-
-def get_available_port():
-    ports = []
-    for c in DOCKER.containers(all=True):
-        ports.extend([p['PublicPort'] for p in c['Ports']])
-    if ports:
-        return sorted(ports)[-1] + 1
-    else:
-        return 49170
 
 
 def get_docker_file(name):
@@ -72,8 +60,7 @@ def build_image(name):
         rm=True
     )
 
-    for i in image:
-        print(i)
+    [i for i in image]
 
 
 def get_container(name, all=True):
@@ -85,34 +72,39 @@ def get_container(name, all=True):
     return None
 
 
-def umount_share(mount_path):
-    file_system_path = os.path.join(mount_path, '.file-system')
+def mount_path(volume, name):
+    mount_folder = ".%s" % name.lower().strip('/')
+    return os.path.join(volume, mount_folder)
+
+
+def umount_share(container):
+    path = mount_path(container['Volumes']['/v'], container['Name'])
 
     subprocess.Popen(
-        "fusermount -u %s -z" % file_system_path,
+        "fusermount -u %s -z" % path,
         shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     ).communicate()
 
     try:
-        os.rmdir(file_system_path)
+        os.rmdir(path)
     except OSError:
         pass
 
 
-def mount_share(host_address, mount_path):
-    umount_share(mount_path)
+def mount_share(container):
+    umount_share(container)
 
-    file_system_path = os.path.join(mount_path, '.file-system')
+    host = container['NetworkSettings']['IPAddress']
+    path = mount_path(container['Volumes']['/v'], container['Name'])
 
     try:
-        os.mkdir(file_system_path)
+        os.mkdir(path)
     except OSError:
         pass
 
     p = subprocess.Popen(
         "sshfs -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o password_stdin root@%s:/ %s" % (
-            host_address,
-            file_system_path
+            host, path
         ),
         stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
         shell=True,
@@ -150,7 +142,7 @@ def THOR_create(args):
     DOCKER.start(
         name,
         binds={
-            os.getcwd(): {
+            args.d: {
                 'bind': '/v',
                 'ro': False
             },
@@ -164,11 +156,15 @@ def THOR_create(args):
 
     container = get_container(args.name)
 
-    mount_share(container['NetworkSettings']['IPAddress'], container['Volumes']['/v'])
+    mount_share(container)
 
 
 def THOR_go(args):
     c = get_container(args.name)
+
+    if not c['State']['Running']:
+        print "Envirotment is not running, please star it with 'thor start %s'" % args.name
+        return None
 
     host = c['NetworkSettings']['IPAddress']
 
@@ -198,13 +194,10 @@ def THOR_start(args):
 def THOR_stop(args):
     name = _name(args.name)
 
-    for c in DOCKER.containers(all=True):
-        if "/%s" % name in c['Names']:
-            DOCKER.stop(c['Id'])
-
-            container = get_container(args.name)
-
-            umount_share(container['Volumes']['/v'])
+    container = get_container(args.name)
+    if container:
+        DOCKER.stop(container)
+        umount_share(container)
 
 
 def THOR_list(args):
@@ -212,29 +205,31 @@ def THOR_list(args):
     for c in containers:
         if c['Image'].startswith('%s-' % PREFIX):
             name = c['Names'][0].strip('/%s-' % PREFIX)
-            if c['Status'].startswith('Up') and args.status in ['all', 'running']:
+            if c['Status'].startswith('Up') and args.status in ['all', 'up']:
                 print name
-            if c['Status'].startswith('Exited') and args.status in ['all', 'stopped']:
+            if c['Status'].startswith('Exited') and args.status in ['all', 'down']:
                 print name
 
 
 def THOR_remove(args):
     name = _name(args.name)
 
-    for c in DOCKER.containers(all=True):
-        if "/%s" % name in c['Names']:
+    container = get_container(args.name)
+    if container:
+        umount_share(container)
 
-            DOCKER.stop(c['Id'])
-            DOCKER.remove_container(c['Id'])
-            DOCKER.remove_image(name)
+        DOCKER.stop(container)
+        DOCKER.remove_container(container)
+        DOCKER.remove_image(name)
 
 
-def main():
+def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='thor')
     subparsers = parser.add_subparsers(help='command')
 
     create_command = subparsers.add_parser('create', help='create')
     create_command.add_argument('name', type=str, help='name')
+    create_command.add_argument('-d', type=str, default=os.getcwd(), help='directory')
     create_command.set_defaults(func=THOR_create)
 
     list_command = subparsers.add_parser('list', help='list')
@@ -257,10 +252,9 @@ def main():
     stop_command.add_argument('name', type=str, help='name')
     stop_command.set_defaults(func=THOR_stop)
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     args.func(args)
 
 
 if __name__ == "__main__":
-
     main()
