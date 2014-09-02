@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+cache: apt
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y sshfs curl
+  - curl -sSL https://get.docker.io/ubuntu/ | sudo sh
+  - pip install -e .
+
+script:
+  - py.test tests.py -v
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
