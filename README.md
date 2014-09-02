@@ -1,13 +1,13 @@
-# Thor
+# Pyerun
 
 Inspired by both Python's virtualenv and Vagrant tools. 
 
 
 ## INSTALL
 
-Install **thor**
+Install **pyerun**
 
-	$ pip install thor
+	$ pip install pyerun
 
 You will need **docker** as well
 
@@ -24,19 +24,19 @@ You will need **docker** as well
 
 Create environment
 
-	$ thor create {name}
+	$ pyerun create {name}
 
 
 Activate environment
 
-	$ thor activate {name}
+	$ pyerun activate {name}
 
 
 List all available environments 
 
-	$ thor list 
+	$ pyerun list 
 
 
 Destroy environment
 
-	$ thor destroy {name}
+	$ pyerun destroy {name}

@@ -1,6 +1,6 @@
 import uuid
 import os
-import thor
+import pyerun
 import shlex
 import time
 import subprocess
@@ -8,14 +8,14 @@ import tempfile
 import paramiko
 
 
-thor.bin.PREFIX = "THOR-testing"
+pyerun.bin.PREFIX = "PYERUN-testing"
 
 NAME = str(uuid.uuid4()).split('-')[0]
 DIRECTORY = tempfile.mkdtemp()
 
 
 def run(cmd):
-    thor.main(shlex.split(cmd))
+    pyerun.main(shlex.split(cmd))
     time.sleep(0.5)
 
 
@@ -23,7 +23,7 @@ def test_1(capsys):
     # create
     run('create %s -d %s' % (NAME, DIRECTORY))
 
-    container = thor.bin.get_container(NAME)
+    container = pyerun.bin.get_container(NAME)
     assert container is not None
 
 
@@ -35,7 +35,7 @@ def test_2():
 
 def test_3():
     # ssh
-    container = thor.bin.get_container(NAME)
+    container = pyerun.bin.get_container(NAME)
     host = container['NetworkSettings']['IPAddress']
 
     client = paramiko.SSHClient()
@@ -56,5 +56,5 @@ def test_5():
     # remove
     run('remove %s' % NAME)
 
-    container = thor.bin.get_container(NAME)
+    container = pyerun.bin.get_container(NAME)
     assert container is None

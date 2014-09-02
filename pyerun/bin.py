@@ -19,7 +19,7 @@ else:
     version = '0.9.1'
 
 
-PREFIX = "THOR"
+PREFIX = "PYERUN"
 BASE_IMAGE = "%s-BASE" % PREFIX
 
 DOCKER = docker.Client(
@@ -113,7 +113,7 @@ def mount_share(container):
 
 
 
-def THOR_create(args):
+def PYERUN_create(args):
     name = _name(args.name)
 
     if is_running(name):
@@ -159,11 +159,11 @@ def THOR_create(args):
     mount_share(container)
 
 
-def THOR_go(args):
+def PYERUN_go(args):
     c = get_container(args.name)
 
     if not c['State']['Running']:
-        print "Envirotment is not running, please star it with 'thor start %s'" % args.name
+        print "Envirotment is not running, please star it with 'pyerun start %s'" % args.name
         return None
 
     host = c['NetworkSettings']['IPAddress']
@@ -178,7 +178,7 @@ def THOR_go(args):
     ).communicate()
 
 
-def THOR_start(args):
+def PYERUN_start(args):
     c = get_container(args.name)
 
     if not c:
@@ -191,7 +191,7 @@ def THOR_start(args):
     mount_share(container['NetworkSettings']['IPAddress'], container['Volumes']['/v'])
 
 
-def THOR_stop(args):
+def PYERUN_stop(args):
     name = _name(args.name)
 
     container = get_container(args.name)
@@ -200,7 +200,7 @@ def THOR_stop(args):
         umount_share(container)
 
 
-def THOR_list(args):
+def PYERUN_list(args):
     containers = DOCKER.containers(all=True)
     for c in containers:
         if c['Image'].startswith('%s-' % PREFIX):
@@ -211,7 +211,7 @@ def THOR_list(args):
                 print name
 
 
-def THOR_remove(args):
+def PYERUN_remove(args):
     name = _name(args.name)
 
     container = get_container(args.name)
@@ -224,33 +224,33 @@ def THOR_remove(args):
 
 
 def main(argv=sys.argv[1:]):
-    parser = argparse.ArgumentParser(prog='thor')
+    parser = argparse.ArgumentParser(prog='pyerun')
     subparsers = parser.add_subparsers(help='command')
 
     create_command = subparsers.add_parser('create', help='create')
     create_command.add_argument('name', type=str, help='name')
     create_command.add_argument('-d', type=str, default=os.getcwd(), help='directory')
-    create_command.set_defaults(func=THOR_create)
+    create_command.set_defaults(func=PYERUN_create)
 
     list_command = subparsers.add_parser('list', help='list')
-    list_command.set_defaults(func=THOR_list)
+    list_command.set_defaults(func=PYERUN_list)
     list_command.add_argument('status', nargs='?', default="all", type=str, help='status')
 
     remove_command = subparsers.add_parser('remove', help='destroy')
     remove_command.add_argument('name', type=str, help='name')
-    remove_command.set_defaults(func=THOR_remove)
+    remove_command.set_defaults(func=PYERUN_remove)
 
     go_command = subparsers.add_parser('go', help='go')
     go_command.add_argument('name', type=str, help='name')
-    go_command.set_defaults(func=THOR_go)
+    go_command.set_defaults(func=PYERUN_go)
 
     start_command = subparsers.add_parser('start', help='stop')
     start_command.add_argument('name', type=str, help='name')
-    start_command.set_defaults(func=THOR_start)
+    start_command.set_defaults(func=PYERUN_start)
 
     stop_command = subparsers.add_parser('stop', help='stop')
     stop_command.add_argument('name', type=str, help='name')
-    stop_command.set_defaults(func=THOR_stop)
+    stop_command.set_defaults(func=PYERUN_stop)
 
     args = parser.parse_args(argv)
     args.func(args)

@@ -2,17 +2,17 @@
 from setuptools import setup
 
 setup(
-    name='thor',
+    name='pyerun',
     author='Sebastian Pawluś',
     author_email='sebastian.pawlus@gmail.com',
     version="0.1.4",
-    packages=['thor'],
+    packages=['pyerun'],
     description='A simple wrapper around docker',
     install_requires=["docker-py"],
-    package_data={'thor': ['Dockerfile']},
+    package_data={'pyerun': ['Dockerfile']},
     entry_points={
         'console_scripts': [
-            'thor=thor.bin:main',
+            'pyerun=pyerun.bin:main',
         ],
     },
     classifiers=[
