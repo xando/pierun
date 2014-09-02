@@ -13,7 +13,7 @@ You will need **docker** as well
 
 **Ubuntu**
 
-From Docker (website)[http://docs.docker.com/installation/ubuntulinux/#ubuntu-trusty-1404-lts-64-bit]
+From Docker [website](http://docs.docker.com/installation/ubuntulinux/#ubuntu-trusty-1404-lts-64-bit)
 
 	$ curl -sSL https://get.docker.io/ubuntu/ | sudo sh
 
