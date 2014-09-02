@@ -20,6 +20,7 @@ def run(cmd):
 
 
 def test_1(capsys):
+    # create
     run('create %s -d %s' % (NAME, DIRECTORY))
 
     container = thor.bin.get_container(NAME)
@@ -45,7 +46,7 @@ def test_3():
 
 
 def test_4(capsys):
-    # list 
+    # list
     run('list')
     out, err = capsys.readouterr()
     assert NAME in out
