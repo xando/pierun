@@ -10,8 +10,9 @@ before_install:
   - pip install -r requirements.txt
   - pip install -e .
   - sudo gpasswd -a ${USER} docker
+  - sudo -E su $USER
 
-script: sudo -E su $USER -c 'py.test tests.py -v'
+script: py.test tests.py -v
 
 notifications:
   email:
