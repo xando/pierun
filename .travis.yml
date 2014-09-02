@@ -13,7 +13,7 @@ before_install:
   - sudo su $USER
 
 script:
-  - sudo py.test tests.py -v
+  - py.test tests.py -v
 
 notifications:
   email:
