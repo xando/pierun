@@ -12,7 +12,7 @@ before_install:
   - sudo gpasswd -a ${USER} docker
 
 script:
-  - sudo -u $USER py.test tests.py -v
+  - py.test tests.py -v
 
 notifications:
   email:
