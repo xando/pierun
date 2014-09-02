@@ -9,6 +9,8 @@ before_install:
   - curl -sSL https://get.docker.io/ubuntu/ | sudo sh
   - pip install -r requirements.txt
   - pip install -e .
+  - sudo gpasswd -a ${USER} docker
+  - sudo su $USER
 
 script:
   - sudo py.test tests.py -v
