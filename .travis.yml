@@ -11,7 +11,7 @@ before_install:
   - pip install -e .
 
 script:
-  - py.test tests.py -v
+  - sudo py.test tests.py -v
 
 notifications:
   email:
