@@ -1,0 +1,3 @@
+# test requirements
+
+paramiko==1.14.1
