@@ -7,19 +7,22 @@ This is more a proof of concept than real thing that you should use (for now).
 
 ## INSTALL
 
-Install **pyerun**
+
+Those steps are Ubuntu only for now (since this is what I've go)
+
+**pyerun**
 
 	$ pip install pyerun
 
-You will need **docker** and **sshfs** as well
-
-**Ubuntu**
+**docker**
 
 From the Docker website [website](http://docs.docker.com/installation/ubuntulinux/#ubuntu-trusty-1404-lts-64-bit)
 
 	$ curl -sSL https://get.docker.io/ubuntu/ | sudo sh
 
-Also to get shares between host machine and **docker** to run right, you will need also **sshfs**
+**sshfs**
+
+To get shares between host machine and **docker** to run right
 
 	$ sudo apt install sshfs 
 
