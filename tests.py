@@ -16,7 +16,7 @@ DIRECTORY = tempfile.mkdtemp()
 
 def run(cmd):
     pyerun.main(shlex.split(cmd))
-    time.sleep(0.5)
+    time.sleep(2)
 
 
 def test_1(capsys):
