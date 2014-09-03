@@ -8,7 +8,7 @@ This is more a proof of concept than real thing that you should use (for now).
 ## INSTALL
 
 
-Those steps are Ubuntu (since this is what I've go)
+Those steps are Ubuntu (since this is what I've got)
 
 **pyerun**
 
