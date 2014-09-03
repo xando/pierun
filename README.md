@@ -36,7 +36,7 @@ To create new environment simply.
 
 	$ pyerun create {name}
 
-If you are creating the first environment for the very first time, it make take a while, since it needs to download en environment image.
+If you are creating the first environment, it make take a while, since it needs to download an docker image.
 
 All environments are created with use of the **Dockerfile** template, which is located under `~/.pyerun/Dockerfile`. Feel free to modify it.
 
