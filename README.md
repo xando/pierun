@@ -46,7 +46,7 @@ To jump into the environment.
 
 	$ pyerun go {name}
 
-This activates the environment. Currently it uses ssh connections between host machine and virtual environment 
+Currently it uses ssh connections between host machine and virtual environment 
 
 ## list
 
@@ -56,6 +56,6 @@ Lists all available environments.
 
 ## remove
 
-To destroy environment
+To destroy an environment.
 
 	$ pyerun remove {name}
