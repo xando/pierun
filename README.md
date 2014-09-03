@@ -1,4 +1,4 @@
-# Pyerun
+# Pierun
 
 Inspired by both Python's virtualenv and Vagrant tools.
 
@@ -10,9 +10,9 @@ This is more a proof of concept than real thing that you should use (for now).
 
 Those steps are Ubuntu (since this is what I've got)
 
-**pyerun**
+**pierun**
 
-	$ pip install pyerun
+	$ pip install pierun
 
 **docker**
 
@@ -34,17 +34,17 @@ To get shares between host machine and **docker** to run right
 
 To create new environment simply.
 
-	$ pyerun create {name}
+	$ pierun create {name}
 
 If you are creating the first environment, it make take a while, since it needs to download an image.
 
-All environments are created with use of the **Dockerfile** template, which is located under `~/.pyerun/Dockerfile`. Feel free to modify it.
+All environments are created with use of the **Dockerfile** template, which is located under `~/.pierun/Dockerfile`. Feel free to modify it.
 
 ## go
 
 To jump into the environment.
 
-	$ pyerun go {name}
+	$ pierun go {name}
 
 Currently it uses ssh connections between host machine and virtual environment 
 
@@ -52,10 +52,10 @@ Currently it uses ssh connections between host machine and virtual environment
 
 Lists all available environments.
  
-	$ pyerun list [up|down]
+	$ pierun list [up|down]
 
 ## remove
 
 To destroy an environment.
 
-	$ pyerun remove {name}
+	$ pierun remove {name}

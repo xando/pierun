@@ -2,17 +2,17 @@
 from setuptools import setup
 
 setup(
-    name='pyerun',
+    name='pierun',
     author='Sebastian Pawluś',
     author_email='sebastian.pawlus@gmail.com',
     version="0.1.4",
-    packages=['pyerun'],
+    packages=['pierun'],
     description='A simple wrapper around docker',
     install_requires=["docker-py"],
-    package_data={'pyerun': ['Dockerfile']},
+    package_data={'pierun': ['Dockerfile']},
     entry_points={
         'console_scripts': [
-            'pyerun=pyerun.bin:main',
+            'pierun=pierun.bin:main',
         ],
     },
     classifiers=[
