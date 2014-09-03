@@ -22,7 +22,7 @@ else:
     version = '0.9.1'
 
 
-PREFIX = "PYERUN"
+PREFIX = "PIERUN"
 BASE_IMAGE = "%s-BASE" % PREFIX
 
 DOCKER = docker.Client(
@@ -37,7 +37,7 @@ if not os.path.exists(SSH_KEY):
 
 
 package_dockerfile = os.path.join(os.path.dirname(__file__), "Dockerfile")
-config = os.path.join(os.path.expanduser("~"), ".pyerun")
+config = os.path.join(os.path.expanduser("~"), ".pierun")
 config_dockerfile = os.path.join(config, "Dockerfile")
 
 if not os.path.exists(config):
@@ -127,7 +127,7 @@ def mount_share(container):
     p.stdin.write("test")
 
 
-def PYERUN_create(args):
+def PIERUN_create(args):
     name = _name(args.name)
 
     if is_running(name):
@@ -173,11 +173,11 @@ def PYERUN_create(args):
     mount_share(container)
 
 
-def PYERUN_go(args):
+def PIERUN_go(args):
     c = get_container(args.name)
 
     if not c['State']['Running']:
-        print "Envirotment is not running, please star it with 'pyerun start %s'" % args.name
+        print "Envirotment is not running, please star it with 'pierun start %s'" % args.name
         return None
 
     host = c['NetworkSettings']['IPAddress']
@@ -192,7 +192,7 @@ def PYERUN_go(args):
     ).communicate()
 
 
-def PYERUN_start(args):
+def PIERUN_start(args):
     c = get_container(args.name)
 
     if not c:
@@ -205,7 +205,7 @@ def PYERUN_start(args):
     mount_share(container)
 
 
-def PYERUN_stop(args):
+def PIERUN_stop(args):
     name = _name(args.name)
 
     container = get_container(args.name)
@@ -214,7 +214,7 @@ def PYERUN_stop(args):
         umount_share(container)
 
 
-def PYERUN_list(args):
+def PIERUN_list(args):
     containers = DOCKER.containers(all=True)
     for c in containers:
         if c['Image'].startswith('%s-' % PREFIX):
@@ -225,7 +225,7 @@ def PYERUN_list(args):
                 print name
 
 
-def PYERUN_remove(args):
+def PIERUN_remove(args):
     name = _name(args.name)
 
     container = get_container(args.name)
@@ -239,33 +239,33 @@ def PYERUN_remove(args):
 
 def main(argv=sys.argv[1:]):
 
-    parser = argparse.ArgumentParser(prog='pyerun')
+    parser = argparse.ArgumentParser(prog='pierun')
     subparsers = parser.add_subparsers(help='command')
 
     create_command = subparsers.add_parser('create', help='create')
     create_command.add_argument('name', type=str, help='name')
     create_command.add_argument('-d', type=str, default=os.getcwd(), help='directory')
-    create_command.set_defaults(func=PYERUN_create)
+    create_command.set_defaults(func=PIERUN_create)
 
     list_command = subparsers.add_parser('list', help='list')
-    list_command.set_defaults(func=PYERUN_list)
+    list_command.set_defaults(func=PIERUN_list)
     list_command.add_argument('status', nargs='?', default="all", type=str, help='status')
 
     remove_command = subparsers.add_parser('remove', help='destroy')
     remove_command.add_argument('name', type=str, help='name')
-    remove_command.set_defaults(func=PYERUN_remove)
+    remove_command.set_defaults(func=PIERUN_remove)
 
     go_command = subparsers.add_parser('go', help='go')
     go_command.add_argument('name', type=str, help='name')
-    go_command.set_defaults(func=PYERUN_go)
+    go_command.set_defaults(func=PIERUN_go)
 
     start_command = subparsers.add_parser('start', help='stop')
     start_command.add_argument('name', type=str, help='name')
-    start_command.set_defaults(func=PYERUN_start)
+    start_command.set_defaults(func=PIERUN_start)
 
     stop_command = subparsers.add_parser('stop', help='stop')
     stop_command.add_argument('name', type=str, help='name')
-    stop_command.set_defaults(func=PYERUN_stop)
+    stop_command.set_defaults(func=PIERUN_stop)
 
     args = parser.parse_args(argv)
     args.func(args)
