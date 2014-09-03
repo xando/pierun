@@ -3,13 +3,16 @@
 import os
 import sys
 import docker
+import shutil
 import argparse
 import tempfile
 import subprocess
 
 
 stdout, _ = subprocess.Popen(
-    "docker version", shell=True, stdout=subprocess.PIPE
+    "docker version",
+    shell=True,
+    stdout=subprocess.PIPE
 ).communicate()
 
 
@@ -33,6 +36,19 @@ if not os.path.exists(SSH_KEY):
     print("You have to setup ssh keys")
 
 
+package_dockerfile = os.path.join(os.path.dirname(__file__), "Dockerfile")
+config = os.path.join(os.path.expanduser("~"), ".pyerun")
+config_dockerfile = os.path.join(config, "Dockerfile")
+
+if not os.path.exists(config):
+    os.mkdir(config)
+
+    shutil.copy2(
+        package_dockerfile,
+        config_dockerfile
+    )
+
+
 def _name(name):
     return "%s-%s" % (PREFIX, name)
 
@@ -45,8 +61,7 @@ def is_running(name):
 
 
 def get_docker_file(name):
-    dockerfile_path =  os.path.join(os.path.dirname(__file__), 'Dockerfile')
-    dockerfile = open(dockerfile_path, 'r').read().replace('**NAME**', name)
+    dockerfile = open(config_dockerfile, 'r').read().replace('**NAME**', name)
     dockerfile_tmp = tempfile.mktemp()
     open(dockerfile_tmp, 'w').write(dockerfile)
     return dockerfile_tmp
@@ -110,7 +125,6 @@ def mount_share(container):
         shell=True,
     )
     p.stdin.write("test")
-
 
 
 def PYERUN_create(args):
@@ -188,7 +202,7 @@ def PYERUN_start(args):
 
     container = get_container(args.name)
 
-    mount_share(container['NetworkSettings']['IPAddress'], container['Volumes']['/v'])
+    mount_share(container)
 
 
 def PYERUN_stop(args):
@@ -224,6 +238,7 @@ def PYERUN_remove(args):
 
 
 def main(argv=sys.argv[1:]):
+
     parser = argparse.ArgumentParser(prog='pyerun')
     subparsers = parser.add_subparsers(help='command')
 
