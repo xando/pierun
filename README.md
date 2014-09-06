@@ -1,8 +1,16 @@
 # Pierun
 
-Inspired by both Python's virtualenv and Vagrant tools.
+The modern development process, reached  the level of complexity where
+isolating projects on libraries levels seems to be not enough, despite
+the  fact  that  tools  like  virtualenv and  rvm  are  doing  perfect
+job. Rarely projects are combined only from language packages.
 
-This is more a proof of concept than real thing that you should use (for now).
+Pierun  project  was  inspired  by both  Python's  **virtualenv**  and
+**Vagrant**  projects.   It  tries  to   combine  a  simplicity  of
+virtualenv with the power of Vagrant, with everything build on the top
+of Docker shoulders. 
+
+The project more of a proof of concept than real thing that you should use (for now). Though feel free to use it, create bugs 
 
 
 ## INSTALL
@@ -24,7 +32,7 @@ From the Docker website [website](http://docs.docker.com/installation/ubuntulinu
 
 To get shares between host machine and **docker** to run right
 
-	$ sudo apt install sshfs 
+	$ sudo apt install sshfs
 
 
 ## USAGE
@@ -46,12 +54,29 @@ To jump into the environment.
 
 	$ pierun go {name}
 
-Currently it uses ssh connections between host machine and virtual environment 
+Currently it uses ssh connections between host machine and virtual environment
+
+## go
+
+To run command without going into the environment.
+
+	$ pierun run {name} {command}
+
+The comand `pwd` will be set to the root of the the environment eg.
+
+	$ pierun run test-env ./manage.py runserver 0.0.0.0:8000
+	Performing system checks...
+
+	System check identified no issues (0 silenced).
+	September 06, 2014 - 07:16:58
+	Django version 1.7, using settings 'project.settings'
+	Starting development server at http://0.0.0.0:8000/
+	Quit the server with CONTROL-C.
 
 ## list
 
 Lists all available environments.
- 
+
 	$ pierun list [up|down]
 
 ## remove

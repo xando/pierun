@@ -31,10 +31,6 @@ DOCKER = docker.Client(
     timeout=10
 )
 
-SSH_KEY = os.path.expanduser("~/.ssh/id_rsa.pub")
-if not os.path.exists(SSH_KEY):
-    print("You have to setup ssh keys")
-
 
 package_dockerfile = os.path.join(os.path.dirname(__file__), "Dockerfile")
 config = os.path.join(os.path.expanduser("~"), ".pierun")
@@ -88,7 +84,7 @@ def get_container(name, all=True):
 
 
 def mount_path(volume, name):
-    mount_folder = ".%s" % name.lower().strip('/')
+    mount_folder = ".%s" % name.lstrip('/').lstrip("%s-" % PREFIX)
     return os.path.join(volume, mount_folder)
 
 
@@ -118,7 +114,7 @@ def mount_share(container):
         pass
 
     p = subprocess.Popen(
-        "sshfs -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o password_stdin root@%s:/ %s" % (
+        "sshfs -o UserKnownHostsFile=/dev/null -o reconnect -o StrictHostKeyChecking=no -o password_stdin root@%s:/ %s" % (
             host, path
         ),
         stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -132,6 +128,11 @@ def PIERUN_create(args):
 
     if is_running(name):
         print("Environment '%s' already created" % args.name)
+        sys.exit(1)
+
+    ssh_key = os.path.expanduser("~/.ssh/id_rsa.pub")
+    if not os.path.exists(ssh_key):
+        print("You have to setup ssh keys")
         sys.exit(1)
 
     print("Creating envirotment, please wait, ...")
@@ -160,7 +161,7 @@ def PIERUN_create(args):
                 'bind': '/v',
                 'ro': False
             },
-            SSH_KEY: {
+            ssh_key: {
                 'bind': '/root/.ssh/authorized_keys',
                 'ro': True
             },
@@ -178,7 +179,7 @@ def PIERUN_go(args):
 
     if not c['State']['Running']:
         print "Envirotment is not running, please star it with 'pierun start %s'" % args.name
-        return None
+        sys.exit(1)
 
     host = c['NetworkSettings']['IPAddress']
 
@@ -192,11 +193,29 @@ def PIERUN_go(args):
     ).communicate()
 
 
+def PIERUN_run(args):
+    c = get_container(args.name)
+
+    if not c['State']['Running']:
+        print "Envirotment is not running, please star it with 'pierun start %s'" % args.name
+        sys.exit(1)
+
+    host = c['NetworkSettings']['IPAddress']
+    stdout, stderr = subprocess.Popen(
+        "ssh "
+        "-o UserKnownHostsFile=/dev/null "
+        "-o StrictHostKeyChecking=no "
+        "-o GSSAPIAuthentication=no "
+        " root@%s -t 'cd /v; %s' " % (host, " ".join(args.command)),
+        shell=True,
+    ).communicate()
+
+
 def PIERUN_start(args):
     c = get_container(args.name)
 
     if not c:
-        return None
+        sys.exit(1)
 
     DOCKER.start(c['Id'])
 
@@ -266,6 +285,11 @@ def main(argv=sys.argv[1:]):
     stop_command = subparsers.add_parser('stop', help='stop')
     stop_command.add_argument('name', type=str, help='name')
     stop_command.set_defaults(func=PIERUN_stop)
+
+    run_command = subparsers.add_parser('run', help='run')
+    run_command.add_argument('name', type=str, help='name')
+    run_command.add_argument('command', nargs=argparse.REMAINDER, type=str, help='command')
+    run_command.set_defaults(func=PIERUN_run)
 
     args = parser.parse_args(argv)
     args.func(args)
