@@ -10,8 +10,6 @@ Pierun  project  was  inspired  by both  Python's  **virtualenv**  and
 virtualenv with the power of Vagrant, with everything build on the top
 of Docker shoulders. 
 
-The project more of a proof of concept than real thing that you should use (for now). Though feel free to use it, create bugs 
-
 
 ## INSTALL
 
@@ -30,7 +28,7 @@ From the Docker website [website](http://docs.docker.com/installation/ubuntulinu
 
 **sshfs**
 
-To get shares between host machine and **docker** to run right
+To get shares between host machine and **docker** run right
 
 	$ sudo apt install sshfs
 
@@ -40,13 +38,14 @@ To get shares between host machine and **docker** to run right
 
 ### create
 
-To create new environment simply.
+To create new environment.
 
 	$ pierun create {name}
 
 If you are creating the first environment, it make take a while, since it needs to download an image.
 
-All environments are created with use of the **Dockerfile** template, which is located under `~/.pierun/Dockerfile`. Feel free to modify it.
+All environments are created with use of the **Dockerfile** template, which is located under `~/.pierun/Dockerfile`.
+Feel free to modify it to suit your needs.
 
 ## go
 
@@ -56,7 +55,7 @@ To jump into the environment.
 
 Currently it uses ssh connections between host machine and virtual environment
 
-## go
+## run
 
 To run command without going into the environment.
 
